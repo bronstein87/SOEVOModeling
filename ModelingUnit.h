@@ -27,9 +27,12 @@
 #include <Data.Bind.Components.hpp>
 #include <Data.Bind.EngExt.hpp>
 #include <System.Bindings.Outputs.hpp>
+#include <System.SysUtils.hpp>
 #include <System.Rtti.hpp>
 #include <Vcl.Bind.DBEngExt.hpp>
 #include <Vcl.Bind.Editors.hpp>
+#include <memory>
+#include <string>
 //---------------------------------------------------------------------------
 
 const int MaxPoint = 3000;
@@ -43,7 +46,7 @@ struct OffsetAngles
 	 alphaTwoOY(0), alphaTwoOX(0),
 	 lambdaOY(0),lambdaOX(0),
 	 gammaOY(0), gammaOX(0),
-	 SKOGammaOX(0),SKOGammaOY(0)
+	 SKOGammaOZ(0)
 	 {}
 
 	double alphaOneOY;
@@ -54,8 +57,7 @@ struct OffsetAngles
 	double lambdaOX;
 	double gammaOY;
 	double gammaOX;
-	double SKOGammaOX;
-	double SKOGammaOY;
+	double SKOGammaOZ;
 };
 
 struct VectorCos
@@ -131,6 +133,12 @@ struct AdditionalPointsOffset
    double   firstPointOffsetY;
    double	secondPointOffsetX;
    double	secondPointOffsetY;
+};
+
+struct SimulateCatalogData
+{
+	vector <double> alpha;
+	vector <double> delta;
 };
 
 class TForm1 : public TForm
@@ -244,9 +252,7 @@ __published:	// IDE-managed Components
 	TEdit *EditSecondPointY;
 	TLabel *Ошибки;
 	TLabel *Label47;
-	TLabel *Label55;
-	TEdit *EditGammaErrorY;
-	TEdit *EditGammaErrorX;
+	TEdit *EditGammaErrorZ;
 	TCheckBox *AddPointsCheckBox;
 	TBindingsList *BindingsList1;
 	TLinkControlToProperty *LinkControlToPropertyEnabled;
@@ -254,6 +260,8 @@ __published:	// IDE-managed Components
 	TLinkControlToProperty *LinkControlToPropertyEnabled3;
 	TLinkControlToProperty *LinkControlToPropertyEnabled4;
 	TLabel *Label39;
+	TButton *Button1;
+	TOpenDialog *OpenDialog;
 	void __fastcall ButtonCloseClick(TObject *Sender);
 	void __fastcall ButtonSimulateClick(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);
@@ -267,6 +275,7 @@ __published:	// IDE-managed Components
 	void __fastcall CheckBoxDistClick(TObject *Sender);
 	void __fastcall ButtonOpenDistClick(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+	void __fastcall Button1Click(TObject *Sender);
 
 private:	// User declarations
 	void ReadINI(AnsiString path);
@@ -275,13 +284,18 @@ private:	// User declarations
 	void XY(double* Xout,double* Yout, int a, int b, VectorCos& v, double Mx[3][3]);
 	vector < pair<short, short> > RadToPix(XYCoords& in, XYCoords& out, double SKOpixel, bool flDist);
 	void Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles& offsetAngles, VectorCos& vecCos, XYCoords& in);
+	void Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles& offsetAngles, VectorCos& vecCos, XYCoords& in, SimulateCatalogData& simCat);
+	void initErrors();
+	void initMatrixes();
+	void initLeftParams();
+	void readSimCat(String filename, SimulateCatalogData& catData);
 
+	OffsetAngles offsetAngles;
 	AdditionalPointsOffset addPointsParams;
 	double f, Delement, RadiusPZ, DiagPZ;
 	double GammaMax, GammaInc, incOX, incOZ;
 	double Gamma[MaxPoint];
 	double dx[MaxPoint][MaxPoint], dy[MaxPoint][MaxPoint], dx_r[MaxPoint][MaxPoint], dy_r[MaxPoint][MaxPoint];
-	//double L_res[MaxPoint][MaxPoint], //M_res[MaxPoint][MaxPoint]//, //N_res[MaxPoint][MaxPoint];
 	int Cx, Cy, CountOX, CountOZ, CountPixY[MaxPoint], CountOZ_1, CountPixY_1[MaxPoint];
 	int MaxX, MaxY;
 	double Minit[3][3], Mc[3][3], Mx[3][3], Mz[3][3], My[3][3], LMN[3], Maxis[3][3];
@@ -291,7 +305,8 @@ private:	// User declarations
 	bool if_SKO, CenterModel;
 	double scale, DelCenter;
 	double Ax[MaxDist], Ay[MaxDist];
-	double AngleOZ[MaxPoint], AngleOX[MaxPoint][MaxPoint], AngleOX_1[MaxPoint][MaxPoint], AngleOY[MaxPoint];
+	double AngleOZ[MaxPoint], AngleOX[MaxPoint][MaxPoint], AngleOX_1[MaxPoint][MaxPoint],
+	 AngleOY[MaxPoint][MaxPoint], AngleOY_1[MaxPoint][MaxPoint];
 
 
 

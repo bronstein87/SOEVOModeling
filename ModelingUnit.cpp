@@ -15,7 +15,7 @@
 #include <vector>
 #include <utility>
 #include <iomanip>
-
+#include "AddString.h"
 #include "ModelingUnit.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -141,28 +141,26 @@ void TForm1::XY(double* Xout, double* Yout, int a, int b, VectorCos& v, double M
 
 }
 
-
-
 //---------------------------------------------------------------------------
 
 vector < pair<short, short> > TForm1::RadToPix(XYCoords& in, XYCoords& out, double SKOpixel, bool flDist)
 {
-	int a = 0;
-
-	vector< pair<short, short> > vec;
+	vector < pair<short, short> > vec;
 	for (int i = 0; i < CountOZ; i++)
 	{
-		int b = 0;
+		int starCountLine = 0;
 		for (int j = 0; j < CountOX; j++)
 		{
 			if (flDist) {
 				dx[i][j] = Ax[0] + Ax[1]*in.X[i][j] + Ax[2]*in.Y[i][j]
 				+ Ax[3]*in.X[i][j]*in.X[i][j] + Ax[4]*in.X[i][j]*in.Y[i][j]+Ax[5]*in.Y[i][j]*in.Y[i][j]
-				+ Ax[6]*in.X[i][j]*in.X[i][j]*in.X[i][j] + Ax[7]*in.X[i][j]*in.X[i][j]*in.Y[i][j] + Ax[8]*in.X[i][j]*in.Y[i][j]*in.Y[i][j] + Ax[9]*in.Y[i][j]*in.Y[i][j]*in.Y[i][j];
+				+ Ax[6]*in.X[i][j]*in.X[i][j]*in.X[i][j] + Ax[7]*in.X[i][j]*in.X[i][j]*in.Y[i][j] + Ax[8]*in.X[i][j]*in.Y[i][j]*in.Y[i][j]
+				+ Ax[9]*in.Y[i][j]*in.Y[i][j]*in.Y[i][j];
 
 				dy[i][j] = Ay[0] + Ay[1]*in.X[i][j] + Ay[2]*in.Y[i][j]
 				+ Ay[3]*in.X[i][j]*in.X[i][j] + Ay[4]*in.X[i][j]*in.Y[i][j]+Ay[5]*in.Y[i][j]*in.Y[i][j]
-				+ Ay[6]*in.X[i][j]*in.X[i][j]*in.X[i][j] + Ay[7]*in.X[i][j]*in.X[i][j]*in.Y[i][j] + Ay[8]*in.X[i][j]*in.Y[i][j]*in.Y[i][j] + Ay[9]*in.Y[i][j]*in.Y[i][j]*in.Y[i][j];
+				+ Ay[6]*in.X[i][j]*in.X[i][j]*in.X[i][j] + Ay[7]*in.X[i][j]*in.X[i][j]*in.Y[i][j] + Ay[8]*in.X[i][j]*in.Y[i][j]*in.Y[i][j]
+				+ Ay[9]*in.Y[i][j]*in.Y[i][j]*in.Y[i][j];
 			}
 			else {
 				dx[i][j] = 0.;
@@ -179,11 +177,12 @@ vector < pair<short, short> > TForm1::RadToPix(XYCoords& in, XYCoords& out, doub
 					if ((x >= 0) && (x <= MaxX) && (y >= 0)&& (y <= MaxY) &&
 						((j <= floor(CountOX*DelCenter)) || (j >= floor(CountOX*(1-DelCenter)))))
 					{
-						out.X[i][b] = x + RandG(0, SKOpixel);
-						out.Y[i][b] = y + RandG(0, SKOpixel);
-						AngleOX[i][b] = AngleOX_1[i][j];
-						vec.push_back(make_pair(i,j));
-						b++;
+						out.X[i][starCountLine] = x + RandG(0, SKOpixel);
+						out.Y[i][starCountLine] = y + RandG(0, SKOpixel);
+						AngleOX[i][starCountLine] = AngleOX_1[i][j];
+						AngleOY[i][starCountLine] = AngleOY_1[i][j];
+						vec.push_back(make_pair(i, j));
+						starCountLine++;
 
 					}
 				}
@@ -191,30 +190,32 @@ vector < pair<short, short> > TForm1::RadToPix(XYCoords& in, XYCoords& out, doub
 				{
 					if ((x >= 0) && (x <= MaxX) && (y >= 0) && (y <= MaxY))
 					{
-						out.X[i][b] = x + RandG(0, SKOpixel);
-						out.Y[i][b] = y + RandG(0, SKOpixel);
-						AngleOX[i][b] = AngleOX_1[i][j];
-						vec.push_back(make_pair(i,j));
-						b++;
+						out.X[i][starCountLine] = x + RandG(0, SKOpixel);
+						out.Y[i][starCountLine] = y + RandG(0, SKOpixel);
+						AngleOX[i][starCountLine] = AngleOX_1[i][j];
+						AngleOY[i][starCountLine] = AngleOY_1[i][j];
+						vec.push_back(make_pair(i, j));
+						starCountLine++;
 
 					}
 				}
 			}
-			else  	//БЕЗ ПРОПУСКА ЦЕНТРА
+			else
 			{
 				if ((x >= 0) && (x <= MaxX) && (y >= 0) && (y <= MaxY))
 				{
-					out.X[i][b] = x + RandG(0, SKOpixel);
-					out.Y[i][b] = y + RandG(0, SKOpixel);
-					AngleOX[i][b] = AngleOX_1[i][j];
-					dx_r[i][b] = dx[i][j];
-					dy_r[i][b] = dy[i][j];
-					vec.push_back(make_pair(i,j));
-					b++;
+					out.X[i][starCountLine] = x + RandG(0, SKOpixel);
+					out.Y[i][starCountLine] = y + RandG(0, SKOpixel);
+					AngleOX[i][starCountLine] = AngleOX_1[i][j];
+					AngleOY[i][starCountLine] = AngleOY_1[i][j];
+					dx_r[i][starCountLine] = dx[i][j];
+					dy_r[i][starCountLine] = dy[i][j];
+					vec.push_back(make_pair(i, j));
+					starCountLine++;
 				}
 			}
 		}
-		CountPixY[i] = b;
+		CountPixY[i] = starCountLine;
 	}
 					// вывод dx, dy в файл
 	if (flDist)
@@ -348,78 +349,6 @@ void MultMatrix(double matrix1[3][3], double matrix2[3][3], double matrix[3][3])
 	}
 }
 
- void Modeling(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles& offsetAngles, VectorCos& vecCos, XYCoords& in)
- {
-//	// вносим лямбду и альфа 1
-//	CountOZ = floor(pi/incOZ) + 1; 	//Кол-во поворотов вокруг OZ
-//	CountOX = NumberInRow;       //Кол-во поворотов вокруг ОХ
-//	if (CountOZ > MaxPoint) CountOZ = MaxPoint;
-//	if (CountOX > MaxPoint) CountOX = MaxPoint;
-//
-//	double offsetAlphaOneLambdaOY = offsetAngles.alphaOneOY + offsetAngles.lambdaOY;
-//	double offsetAlphaOneLambdaOX = offsetAngles.alphaOneOX + offsetAngles.lambdaOX;
-//	calculateLMN(offsetAlphaOneLambdaOX, offsetAlphaOneLambdaOY, 0, LMN);
-//	double Mc[3][3];
-//	double MgammaOX[3][3];
-//	double MgammaOY[3][3];
-//	double MalphaTwoOX[3][3];
-//	double MalphaTwoOY[3][3];
-//	initMatrix(Mc);
-//	initMatrix(MgammaOX);
-//	initMatrix(MgammaOY);
-//	initMatrix(MalphaTwoOX);
-//	initMatrix(MalphaTwoOY);
-//
-//	// вносим гамма
-//	RotateOX(offsetAngles.gammaOY, Minit, MgammaOY);
-//	RotateOY(offsetAngles.gammaOX, MgammaOY, MgammaOX);
-//	// вносим альфа два
-//	RotateOX(offsetAngles.alphaTwoOY, MgammaOX, MalphaTwoOY);
-//	RotateOY(offsetAngles.alphaTwoOX, MalphaTwoOY, MalphaTwoOX);
-//
-//	for (int i = 0; i <= CountOZ; i++)
-//	{
-//		//здесь еще угол альфа 1 ох
-//		AngleOZ[i] = i * incOZ + degtorad(RandG(0, SKO_angle_OZ));
-//		RotateOZ(AngleOZ[i], MalphaTwoOX, Mc);
-//  //Повороты вокруг ОХ
-//		if (CenterModel == false)	//БЕЗ ПРОПУСКА ЦЕНТРА
-//		{
-//			for (int j = 0; j < CountOX; j++)
-//			{
-//				// на матрице получаем смещение по OX, но вращаем по OY
-//				AngleOX_1[i][j] = Gamma[j] + degtorad(RandG(0, SKO_angle_OX));
-//				RotateOY(AngleOX_1[i][j], Mc, Mx);
-//				XY(&in.X[i][j], &in.Y[i][j], i, j, vecCos, );
-//				int a = 0;
-//			}
-//		}
-//		else	//С ПРОПУСКОМ ЦЕНТРА
-//		{
-//			int counter = 0;
-//			for (int j = 0; j < CountOX; j++)
-//			{
-//				if ( ((counter <= floor(CountOX * DelCenter))
-//					||(counter >= floor(CountOX * (1 - DelCenter)))) && ((i+1) % center != 0))
-//				{
-//					AngleOX_1[i][counter] = Gamma[j] + degtorad(RandG(0, SKO_angle_OX));
-//					RotateOY(AngleOX_1[i][counter], Mc, Mx);
-//					XY(&in.X[i][counter], &in.Y[i][counter], i, counter, vecCos);
-//					counter++;
-//				}
-//				else
-//				{
-//					AngleOX_1[i][j] = Gamma[j] + degtorad(RandG(0, SKO_angle_OX));
-//					RotateOY(AngleOX_1[i][j], Mc, Mx);
-//					XY(&in.X[i][j], &in.Y[i][j], i, j, vecCos);
-//				}
-//			}
-//		}
-//	}
-
-
-
-}
 
 double atan2mod(double yf, double xf)
 {
@@ -459,7 +388,91 @@ void matrToEkvA(double M_ornt[3][3], double& al, double& dl, double& Az)
 	}
 }
 
+void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles& offsetAngles, VectorCos& vecCos, XYCoords& in, SimulateCatalogData& simCat)
+{
+     //Mc = Minit для 1 шага
+ //Моделирование результатов испытаний
 
+	double MsecondPlatfOY[3][3];
+	double MsecondPlatfOX[3][3];
+	double MgammaOY[3][3];
+	double MgammaOZ[3][3];
+	double MgammaOX[3][3];
+	double MVSKNoDir[3][3];
+	double MVSK[3][3];
+	double MDelta[3][3];
+
+//	CountOZ = floor(2 * pi / incOZ) + 1; 	//Кол-во поворотов вокруг OZ
+//	if (radtodeg(incOZ * CountOZ) > 359.9)
+//	{
+//		CountOZ = CountOZ - 1;
+//	}
+
+	if (CountOX > MaxPoint) CountOX = MaxPoint;
+	CountOZ = CountOX;
+	double triangleAngles [3][2] =  {{0, 0},
+	{addPointsParams.firstPointOffsetY, addPointsParams.firstPointOffsetX},
+	{addPointsParams.secondPointOffsetY, addPointsParams.secondPointOffsetX}};
+
+	double Mi[3][3]  = {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
+	double Mtemp[3][3];
+	vector <double> gammaOZAngles;
+
+	int pointCount;
+	if (AddPointsCheckBox->Checked)
+	{
+		pointCount = 3;
+	}
+	else
+	{
+		pointCount = 1;
+	}
+
+	for (int i = 0; i <= CountOZ; i++)
+	{
+		double errorOz = 0;
+		if (CheckBoxAngleError->Checked) {
+			errorOz = RandG(0.0055, offsetAngles.SKOGammaOZ);
+		}
+		gammaOZAngles.push_back(errorOz);
+	}
+
+		CountOX = pointCount * simCat.alpha.size();
+		for (int j = 0; j < CountOX; j++)
+		{
+			for (int i = 0; i < CountOZ ; i++)
+			{
+				int pointPos = j * pointCount;
+				for (int k = 0; k < pointCount; k++)
+				{
+					RotateOZ(gammaOZAngles[i], Minit, MgammaOZ);    // новый поворот
+					RotateOY(offsetAngles.gammaOY, MgammaOZ, MgammaOY);
+					RotateOX(offsetAngles.gammaOX, MgammaOY, MgammaOX);
+					AngleOZ[i] = i * incOZ;
+					AngleOY_1[i][pointPos] = degtorad(simCat.delta[j]);
+					double AngleOZReal =  AngleOZ[i] + degtorad(RandG(0, SKO_angle_OZ));
+					AngleOX_1[i][pointPos] = degtorad(simCat.alpha[j]);
+					double AngleOXReal =  AngleOX_1[i][pointPos] + degtorad(RandG(0, SKO_angle_OX));
+					RotateOZ(AngleOXReal, Minit, Mx);
+					RotateOY(offsetAngles.alphaTwoOY, Minit , MsecondPlatfOY);
+					RotateOX(offsetAngles.alphaTwoOX, MsecondPlatfOY, MsecondPlatfOX);
+					MatrProizv3x3(Mi ,MsecondPlatfOX , Mtemp);
+					//RotateOZ(AngleOZReal, Mtemp, Mc);
+					RotateOY(Gamma[i], Mtemp, Mc);  // новый поворот
+					MatrProizv3x3(Mc ,Mx, Mtemp);
+					MatrProizv3x3(MgammaOX, Mtemp, MVSKNoDir);
+					MatrProizv3x3(Maxis, MVSKNoDir, MVSK);
+					LMN[0] = -cos(degtorad(simCat.delta[j]) + offsetAngles.alphaOneOY + triangleAngles[k][0])
+					* cos(offsetAngles.lambdaOX + offsetAngles.alphaOneOX + + triangleAngles[k][1]);
+					LMN[1] = -cos(degtorad(simCat.delta[j]) + offsetAngles.alphaOneOY + triangleAngles[k][0])
+					* sin(offsetAngles.lambdaOX + offsetAngles.alphaOneOX + triangleAngles[k][1]);
+					LMN[2] = -sin(degtorad(simCat.delta[j])+ offsetAngles.alphaOneOY + triangleAngles[k][0]);
+					XY(&in.X[i][pointPos], &in.Y[i][pointPos], i, pointPos, vecCos, MVSK);
+					++pointPos;
+				}
+			}
+		}
+}
 
 void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles& offsetAngles, VectorCos& vecCos, XYCoords& in)
 {
@@ -468,10 +481,12 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 
 	double MsecondPlatfOY[3][3];
 	double MsecondPlatfOX[3][3];
+	double MgammaOZ[3][3];
 	double MgammaOY[3][3];
 	double MgammaOX[3][3];
 	double MVSKNoDir[3][3];
 	double MVSK[3][3];
+	double MDelta[3][3];
 
 	CountOZ = floor(2 * pi / incOZ) + 1; 	//Кол-во поворотов вокруг OZ
 	if (radtodeg(incOZ * CountOZ) > 359.9)
@@ -479,84 +494,74 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 		CountOZ = CountOZ - 1;
 	}
 
-	if (AddPointsCheckBox->Checked)
-	{
-		CountOX = NumberInRow * 3;
-	}
-	else
-	{
-		CountOX = NumberInRow;
-	}
-
 	if (CountOZ > MaxPoint) CountOZ = MaxPoint;
 	if (CountOX > MaxPoint) CountOX = MaxPoint;
+	//CountOZ = CountOX;
 
-	LMN[0] = -cos(offsetAngles.lambdaOY + offsetAngles.alphaOneOY) * cos(offsetAngles.lambdaOX + offsetAngles.alphaOneOX);
-	LMN[1] = -cos(offsetAngles.lambdaOY + offsetAngles.alphaOneOY) * sin(offsetAngles.lambdaOX + offsetAngles.alphaOneOX);
-	LMN[2] = -sin(offsetAngles.lambdaOY + offsetAngles.alphaOneOY);
+	double triangleAngles [3][2] =  {{0, 0},
+	{addPointsParams.firstPointOffsetY, addPointsParams.firstPointOffsetX},
+	{addPointsParams.secondPointOffsetY, addPointsParams.secondPointOffsetX}};
 
 	double Mi[3][3]  = {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
 	double Mtemp[3][3];
 	//double MfirstPlatfOX[3][3];
 	//RotateOX(offsetAngles.lambdaOX + offsetAngles.alphaOneOX, Minit, MfirstPlatfOX);
-	vector <double> gammaOXAngles;
-	vector <double> gammaOYAngles;
+	vector <double> gammaOZAngles;
 
-	for (int i = 0; i <= CountOZ; i++)
+	int pointCount;
+	if (AddPointsCheckBox->Checked)
 	{
-		gammaOXAngles.push_back(offsetAngles.gammaOX + RandG(0, offsetAngles.SKOGammaOX));
-		gammaOYAngles.push_back(offsetAngles.gammaOY + RandG(0, offsetAngles.SKOGammaOY));
+		pointCount = 3;
+		CountOX = NumberInRow * pointCount;
 	}
-   //	RotateOY(offsetAngles.gammaOY + offsetAngles.SKOGammaOY, Minit, MgammaOY);
-	//RotateOX(offsetAngles.gammaOX + offsetAngles.SKOGammaOX, MgammaOY, MgammaOX);
-
-	if (CenterModel == false)	//БЕЗ ПРОПУСКА ЦЕНТРА
+	else
 	{
+		pointCount = 1;
+		CountOX = NumberInRow;
+	}
+
+	for (int i = 0; i < CountOZ; i++)
+	{
+		double errorOz = 0;
+		if (CheckBoxAngleError->Checked) {
+			errorOz = RandG(0.0055, offsetAngles.SKOGammaOZ);
+		}
+		gammaOZAngles.push_back(errorOz);
+	}
 		for (int j = 0; j < CountOX; j++)
 		{
-			for (int i = 0; i <= CountOZ; i++)
+			for (int i = 0; i < CountOZ; i++)
 			{
-				RotateOY(gammaOYAngles[i], Minit, MgammaOY);
-				RotateOX(gammaOXAngles[i], MgammaOY, MgammaOX);
-				AngleOZ[i] = i * incOZ;
-				double AngleOZReal =  AngleOZ[i] + degtorad(RandG(0, SKO_angle_OZ));
-				int pos = j > 2 && AddPointsCheckBox->Checked ? j - 2 : j;
-				AngleOX_1[i][j] = Gamma[pos];
-				double AngleOXReal =  AngleOX_1[i][j] + degtorad(RandG(0, SKO_angle_OX));
-				RotateOZ(AngleOXReal, Minit, Mx);
-				RotateOY(offsetAngles.alphaTwoOY, Minit , MsecondPlatfOY);
-				RotateOX(offsetAngles.alphaTwoOX, MsecondPlatfOY, MsecondPlatfOX);
-				MatrProizv3x3(Mi ,MsecondPlatfOX , Mtemp);
-				RotateOZ(AngleOZReal, Mtemp, Mc);
-				MatrProizv3x3(Mc ,Mx, Mtemp);
-				MatrProizv3x3(MgammaOX, Mtemp, MVSKNoDir);
-				MatrProizv3x3(Maxis, MVSKNoDir, MVSK);
-				XY(&in.X[i][j], &in.Y[i][j], i, j, vecCos, MVSK);
-				if (AddPointsCheckBox->Checked)
+				int pointPos = j * pointCount;
+				for (int k = 0; k < pointCount; k++)
 				{
-					int jInit = j;
-					double initX =   in.X[i][j];
-					double initY =   in.Y[i][j];
-					in.X[i][++j] =   initX + addPointsParams.firstPointOffsetX;
-					in.Y[i][j] =  initY + addPointsParams.firstPointOffsetY;
-					AngleOX_1[i][j] = Gamma[pos];
-					in.X[i][++j] = initX + addPointsParams.secondPointOffsetX;
-					in.Y[i][j] =  initY + addPointsParams.secondPointOffsetY;
-					AngleOX_1[i][j] = Gamma[pos];
-					j = jInit;
+					RotateOZ(gammaOZAngles[i], Minit, MgammaOZ);    // новый поворот
+					RotateOY(offsetAngles.gammaOY, MgammaOZ, MgammaOY);
+					RotateOX(offsetAngles.gammaOX, MgammaOY, MgammaOX);
+					AngleOZ[i] = i * incOZ;
+					double AngleOZReal =  AngleOZ[i] + degtorad(RandG(0, SKO_angle_OZ));
+					AngleOX_1[i][pointPos] = Gamma[j];
+					double AngleOXReal =  AngleOX_1[i][pointPos] + degtorad(RandG(0, SKO_angle_OX));
+					RotateOZ(AngleOXReal, Minit, Mx);
+					RotateOY(offsetAngles.alphaTwoOY, Minit , MsecondPlatfOY);
+					RotateOX(offsetAngles.alphaTwoOX, MsecondPlatfOY, MsecondPlatfOX);
+					MatrProizv3x3(Mi ,MsecondPlatfOX , Mtemp);
+					//RotateOZ(AngleOZReal, Mtemp, Mc);
+					RotateOY(Gamma[i], Mtemp, Mc);  // новый поворот
+					MatrProizv3x3(Mc ,Mx, Mtemp);
+					MatrProizv3x3(MgammaOX, Mtemp, MVSKNoDir);
+					MatrProizv3x3(Maxis, MVSKNoDir, MVSK);
+					LMN[0] = -cos(offsetAngles.lambdaOY + offsetAngles.alphaOneOY + triangleAngles[k][0])
+					* cos(offsetAngles.lambdaOX + offsetAngles.alphaOneOX + triangleAngles[k][1]);
+					LMN[1] = -cos(offsetAngles.lambdaOY + offsetAngles.alphaOneOY + triangleAngles[k][0])
+					* sin(offsetAngles.lambdaOX + offsetAngles.alphaOneOX + triangleAngles[k][1]);
+					LMN[2] = -sin(offsetAngles.lambdaOY + offsetAngles.alphaOneOY + triangleAngles[k][0]);
+					XY(&in.X[i][pointPos], &in.Y[i][pointPos], i, pointPos, vecCos, MVSK);
+					++pointPos;
 				}
 			}
-			if (AddPointsCheckBox->Checked)
-			{
-				j += 2;
-			}
 		}
-	}
-
 }
-
-
-
 
 
 //---------------------------------------------------------------------------
@@ -566,17 +571,12 @@ void TForm1::WriteToFile(string filename, XYCoords& out, VectorCos& out_v)
  //Открытие файла для записи результатов моделирования
 	FILE* f_out;
 	FILE* f_lmn;
-	FILE* f_out_nik;
-	string f_nik = filename + "_NIKITIN.txt";
 	string flmn = filename + "LMN.txt";
 	f_out = fopen(filename.append(".txt").c_str(), "w");
 	f_lmn = fopen(flmn.c_str(), "w");
-	f_out_nik = fopen(f_nik.c_str(), "w");
-
  //Вывод результатов испытаний в файл
 	fprintf(f_out, "№OX	№OZ	AngleOZ		AngleOX		AngleOY		    X	  	    Y	DeltaOY\n");
 	fprintf(f_lmn, "№OX	№OZ		Lst		Mst		Nst\n");
-	fprintf(f_out_nik, "Date	Time	File	    X	    Y	I	N	Imax	AngleOX	AngleOZ\n");
 
 	for (int i = 0; i <= CountOZ; i++) {
 		for (int j = 0; j < CountPixY[i]; j++) {
@@ -585,9 +585,7 @@ void TForm1::WriteToFile(string filename, XYCoords& out, VectorCos& out_v)
 			}
 			fprintf(f_out, "%i	%i	%f	%f	%f	%f	%f	%f\n", i+1, j+1,
 			radtodeg(AngleOZ[i]), radtodeg(AngleOX[i][j]),
-			radtodeg(0), out.X[i][j], out.Y[i][j], radtodeg(0));
-			fprintf(f_out_nik, "%i	%i	%i	%f	%f	%i	%i	%i	%f	%f\n", 123, 123, 123, out.X[i][j], out.Y[i][j],
-			123, 123, 123, radtodeg(AngleOX[i][j]), radtodeg(AngleOZ[i]));
+			radtodeg(AngleOY[i][j]), out.X[i][j], out.Y[i][j], radtodeg(0));
 		}
 	}
 	for (int i = 0; i <= CountOZ; i++) {
@@ -599,99 +597,22 @@ void TForm1::WriteToFile(string filename, XYCoords& out, VectorCos& out_v)
  //Закрытие файла
 	fclose(f_out);
 	fclose(f_lmn);
-	fclose(f_out_nik);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::ButtonSimulateClick(TObject *Sender)
 {
-	for (int i = 0; i < MaxDist; i++)
-	{
-		Ax[i] = 0.;
-		Ay[i] = 0.;
-	}
-
-	XYCoords in;
-	XYCoords out_n;
-	XYCoords out_r;
 
 	EditFoc->Enabled    = False;
 	EditElem->Enabled   = False;
 	EditWidth->Enabled  = False;
 	EditHeight->Enabled = False;
  //-------------------------
- //Задание матрицы начальной установки М0
-	Minit[0][0] = 1; Minit[0][1] = 0; Minit[0][2] = 0;
-	Minit[1][0] = 0; Minit[1][1] = 1; Minit[1][2] = 0;
-	Minit[2][0] = 0; Minit[2][1] = 0; Minit[2][2] = 1;
 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 10; j++) {
-			Maxis[i][j] = 0;
-		}
-	}
-	if (UpRadioButton->Checked) {
-		Maxis[0][0] = 1;
-		Maxis[1][1] = 1;
-		Maxis[2][2] = 1;
-	}
-	else if (DownRadioButton->Checked) {
-		Maxis[0][0] = -1;
-		Maxis[1][1] = -1;
-		Maxis[2][2] = 1;
-	}
-	else if (LeftRadioButton->Checked) {
-		Maxis[0][1] = -1;
-		Maxis[1][0] = 1;
-		Maxis[2][2] = 1;
-	}
-	else if (RightRadioButton->Checked) {
-		Maxis[0][1] = 1;
-		Maxis[1][0] = -1;
-		Maxis[2][2] = 1;
-	}
+ 	initErrors();
+	initMatrixes();
+	initLeftParams();
 
- //Задание вектора направляющих косинусов
-	LMN[0] = StrToFloat(L->Text);
-	LMN[1] = StrToFloat(M->Text);
-	LMN[2] = StrToFloat(N->Text);
-
- //Задание параметров оптической системы прибора (Диагональ и радиус поля зрения считаются по ходу ввода)
-	f = StrToFloat(EditFoc->Text);
-	Delement = StrToFloat(EditElem->Text);
-	MaxX = StrToInt(EditWidth->Text);
-	MaxY = StrToInt(EditHeight->Text);
-	RadiusPZ = StrToFloat(EditRad->Text);
-	DiagPZ = SimpleRoundTo(sqrt(8*RadiusPZ*RadiusPZ),-2);
-	EditDiag->Text = FloatToStr(DiagPZ);
-	GammaInc = StrToFloat(EditStepOX->Text);
- //Перевод углов в радианы
-	GammaInc = degtorad(GammaInc);
-	DiagPZ   = degtorad(DiagPZ);
-	incOX    = degtorad(StrToFloat(EditStepOX->Text));
-	incOZ    = degtorad(StrToFloat(EditStepOZ->Text));
-
-	OffsetAngles offsetAngles;
-	offsetAngles.alphaOneOY =  degtorad(StrToFloat(EditAlpha1OY->Text));
-	offsetAngles.alphaOneOX =  degtorad(StrToFloat(EditAlpha1OX->Text));
-	offsetAngles.lambdaOY = degtorad(StrToFloat(EditLambdaOY->Text));
-	offsetAngles.lambdaOX = degtorad(StrToFloat(EditLambdaOX->Text));
-	offsetAngles.alphaTwoOY = degtorad(StrToFloat(EditAlpha2OY->Text));
-	offsetAngles.alphaTwoOX = degtorad(StrToFloat(EditAlpha2OX->Text));
-	offsetAngles.gammaOY = degtorad(StrToFloat(EditGammaOY->Text));
-	offsetAngles.gammaOX = degtorad(StrToFloat(EditGammaOX->Text));
-
-	if (AddPointsCheckBox->Checked)
-	{
-		addPointsParams.firstPointOffsetX = StrToInt(EditFirstPointX->Text) * Delement;
-		addPointsParams.firstPointOffsetY = StrToInt(EditFirstPointY->Text) * Delement;
-		addPointsParams.secondPointOffsetX = StrToInt(EditSecondPointX->Text) * Delement;
-		addPointsParams.secondPointOffsetY = StrToInt(EditSecondPointY->Text) * Delement;
-	}
-
-
-	Cx = MaxX / 2;	Cy = MaxY / 2; //Координаты центра поля зрения
- //Вычисление углов поворота вокруг ОХ
 	if (CheckBoxEqualNet->Checked == False)
 	{
   //НЕРАВНОМЕРНАЯ СЕТКА
@@ -739,6 +660,9 @@ void __fastcall TForm1::ButtonSimulateClick(TObject *Sender)
 	SKOangleOX = 0;
 	SKOpix = 0;
 
+	XYCoords in;
+	XYCoords out_n;
+	XYCoords out_r;
 	VectorCos vecNoError;
 	OffsetAngles zeroAngles;
 	Model_Result(0, 0, zeroAngles, vecNoError, in);
@@ -770,48 +694,7 @@ void __fastcall TForm1::ButtonSimulateClick(TObject *Sender)
 		CountPixY_1[i] = CountPixY[i];
 	}
 
- //РАСЧЕТ В СЛУЧАЕ ОТКЛОНЕНИЙ
- //ВЫБОР МАСШТАБА
-	scale = StrToFloat(EditScale->Text);
-	if_SKO  = false;
-
- //Ввод дисторсии
-	if (CheckBoxDist->Checked == true)
-	{
-		if_SKO = true;
- //чтение Ax, Ay из файла
-		FILE *flist;
-		flist=fopen(AnsiString(EditFileDist->Text).c_str(),"rt");
-		if (flist!=NULL)
-		{
-			int i = 0;
-			char line[200];
-			while ((!feof(flist))&&(i < MaxDist))
-			{
-				if (fgets(line, 200, flist) != NULL)
-				{
-					if (sscanf(line,"%le%le\n", &Ax[i],&Ay[i]) == 2)
-						i++;
-				}
-			}
-			fclose(flist);
-		}
-	}
-
- //Проверка на наличие отклонений
-	if (CheckBoxCoordError->Checked == true) {
-		if_SKO = true;
-		SKOpix = StrToFloat(EditCoordError->Text);
-	}
-
-	if (CheckBoxAngleError->Checked == true) {
-		if_SKO = true;
-		SKOangleOZ = StrToFloat(EditAngleErrorOZ->Text) / 3600.;	   //Чтение в " и перевод в [град]
-		SKOangleOX = StrToFloat(EditAngleErrorOX->Text) / 3600.;     //Чтение в " и перевод в [град]
-		offsetAngles.SKOGammaOX = degtorad(StrToFloat(EditGammaErrorX->Text) / 3600.);
-		offsetAngles.SKOGammaOY = degtorad(StrToFloat(EditGammaErrorY->Text) / 3600.);
-	}
-
+	scale = 1;//StrToFloat(EditScale->Text);
 
 //Моделирование в случае наличия отклонений
 	if (if_SKO)
@@ -889,21 +772,6 @@ void __fastcall TForm1::ButtonSimulateClick(TObject *Sender)
 			}
 		}
 	}
-//	if ((if_SKO)&&(SKOangleOZ==0)&&(SKOangleOX==0)&&(SKOpix==0)&&(CheckBoxDist->Checked == false))
-//	{
-//		string f_without_SKO = "Results_Factical.txt";
-//		WriteToFile(f_without_SKO, out_r, vecError);
-//
-////Вывод результатов испытаний на график
-//		Series2->Active = false; //Отключение Series2
-//		Series1->Clear();		//Очистка Series1 в TChart
-//		Series1->Active = true;
-//		for (int i = 0; i <= CountOZ; i++) {
-//			for (int j = 0; j < CountPixY[i]; j++) {
-//				Series1->AddXY(out_n.X[i][j],out_n.Y[i][j]);
-//			}
-//		}
-//	}
 
 //-------------------------
 	EditFoc->Enabled    = True;
@@ -1036,19 +904,243 @@ void __fastcall TForm1::CheckBoxAngleErrorClick(TObject *Sender)
 	}
 }
 
+	void  TForm1::initErrors()
+	{
+		for (int i = 0; i < MaxDist; i++) {
+			Ax[i] = 0.;
+			Ay[i] = 0.;
+		}
+		if_SKO = false;
+		if (CheckBoxDist->Checked == true) {
+			if_SKO = true;
+			//чтение Ax, Ay из файла
+			FILE* flist;
+			flist = fopen(AnsiString(EditFileDist->Text).c_str(), "rt");
+			if (flist != NULL) {
+				int i = 0;
+				char line[200];
+				while ((!feof(flist)) && (i < MaxDist)) {
+					if (fgets(line, 200, flist) != NULL) {
+						if (sscanf(line, "%le%le\n", &Ax[i], &Ay[i]) == 2)
+							i++;
+					}
+				}
+				fclose(flist);
+			}
+		}
+
+		if (CheckBoxCoordError->Checked == true) {
+			if_SKO = true;
+			SKOpix = StrToFloat(EditCoordError->Text);
+		}
+
+		if (CheckBoxAngleError->Checked == true) {
+			if_SKO = true;
+			SKOangleOZ = StrToFloat(EditAngleErrorOZ->Text) / 3600.; //Чтение в " и перевод в [град]
+			SKOangleOX = StrToFloat(EditAngleErrorOX->Text) / 3600.; //Чтение в " и перевод в [град]
+			offsetAngles.SKOGammaOZ = degtorad(StrToFloat(EditGammaErrorZ->Text) / 3600.);
+			//offsetAngles.SKOGammaOY = degtorad(StrToFloat(EditGammaErrorY->Text) / 3600.);
+		}
 
 
+		offsetAngles.alphaOneOY = degtorad(StrToFloat(EditAlpha1OY->Text));
+		offsetAngles.alphaOneOX = degtorad(StrToFloat(EditAlpha1OX->Text));
+		offsetAngles.lambdaOY = degtorad(StrToFloat(EditLambdaOY->Text));
+		offsetAngles.lambdaOX = degtorad(StrToFloat(EditLambdaOX->Text));
+		offsetAngles.alphaTwoOY = degtorad(StrToFloat(EditAlpha2OY->Text));
+		offsetAngles.alphaTwoOX = degtorad(StrToFloat(EditAlpha2OX->Text));
+		offsetAngles.gammaOY = degtorad(StrToFloat(EditGammaOY->Text));
+		offsetAngles.gammaOX = degtorad(StrToFloat(EditGammaOX->Text));
 
+		if (AddPointsCheckBox->Checked) {
+			addPointsParams.firstPointOffsetX = degtorad(StrToFloat(EditFirstPointX->Text) / 60);
+			addPointsParams.firstPointOffsetY = degtorad(StrToFloat(EditFirstPointY->Text) / 60);
+			addPointsParams.secondPointOffsetX = degtorad(StrToFloat(EditSecondPointX->Text) / 60);
+			addPointsParams.secondPointOffsetY = degtorad(StrToFloat(EditSecondPointY->Text) / 60);
+		}
+	}
 
+ void  TForm1::initMatrixes()
+ {
+      		//Задание матрицы начальной установки М0
+		Minit[0][0] = 1;
+		Minit[0][1] = 0;
+		Minit[0][2] = 0;
+		Minit[1][0] = 0;
+		Minit[1][1] = 1;
+		Minit[1][2] = 0;
+		Minit[2][0] = 0;
+        Minit[2][1] = 0;
+		Minit[2][2] = 1;
 
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 10; j++) {
+				Maxis[i][j] = 0;
+			}
+		}
+		if (UpRadioButton->Checked) {
+			Maxis[0][0] = 1;
+			Maxis[1][1] = 1;
+			Maxis[2][2] = 1;
+		}
+		else if (DownRadioButton->Checked) {
+			Maxis[0][0] = -1;
+			Maxis[1][1] = -1;
+			Maxis[2][2] = 1;
+		}
+		else if (LeftRadioButton->Checked) {
+			Maxis[0][1] = -1;
+			Maxis[1][0] = 1;
+			Maxis[2][2] = 1;
+		}
+		else if (RightRadioButton->Checked) {
+			Maxis[0][1] = 1;
+			Maxis[1][0] = -1;
+			Maxis[2][2] = 1;
+		}
 
+		//Задание вектора направляющих косинусов
+		LMN[0] = StrToFloat(L->Text);
+		LMN[1] = StrToFloat(M->Text);
+		LMN[2] = StrToFloat(N->Text);
+ }
 
+ void  TForm1::initLeftParams()
+ {
+      //Задание параметров оптической системы прибора (Диагональ и радиус поля зрения считаются по ходу ввода)
+	f = StrToFloat(EditFoc->Text);
+	Delement = StrToFloat(EditElem->Text);
+	MaxX = StrToInt(EditWidth->Text);
+	MaxY = StrToInt(EditHeight->Text);
+	RadiusPZ = StrToFloat(EditRad->Text);
+	DiagPZ = SimpleRoundTo(sqrt(8*RadiusPZ*RadiusPZ),-2);
+	EditDiag->Text = FloatToStr(DiagPZ);
+	GammaInc = StrToFloat(EditStepOX->Text);
+ //Перевод углов в радианы
+	GammaInc = degtorad(GammaInc);
+	DiagPZ   = degtorad(DiagPZ);
+	incOX    = degtorad(StrToFloat(EditStepOX->Text));
+	incOZ    = degtorad(StrToFloat(EditStepOZ->Text));
+	Cx = MaxX / 2;
+	Cy = MaxY / 2; //Координаты центра поля зрения
 
+	SKOangleOZ = 0;
+	SKOangleOX = 0;
+	SKOpix = 0;
 
+ }
+ void TForm1::readSimCat(String filename, SimulateCatalogData& catData)
+ {
+		ifstream ifs;
+		ifs.open(AnsiString(filename).c_str());
+		string line;
+		getline(ifs, line);
+		while (getline(ifs, line))
+		{
+			vector <string> splitted = add_string::split(line, "\t");
+			catData.alpha.push_back(stod(splitted[1]));
+			catData.delta.push_back(stod(splitted[2]));
+		}
+		ifs.close();
+ }
 
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+	EditFoc->Enabled = False;
+	EditElem->Enabled = False;
+	EditWidth->Enabled = False;
+	EditHeight->Enabled = False;
+	OpenDialog->Options.Clear();
+	OpenDialog->Filter = "txt|*.txt";
+	OpenDialog->Options << ofAllowMultiSelect;
+if (OpenDialog->Execute()) {
+	unique_ptr<TStringList> FileList(new TStringList());
+	FileList->Assign(OpenDialog->Files);
+	initErrors();
+	initMatrixes();
+	initLeftParams();
+	for (int k = 0; k < FileList->Count; k++) {
+		SimulateCatalogData simCat;
+		readSimCat(FileList->Strings[k], simCat);
+		XYCoords in;
+		XYCoords out_n;
+		XYCoords out_r;
+		//РАСЧЕТ БЕЗ ОТКЛОНЕНИЙ
+		VectorCos vecNoError;
+        OffsetAngles zeroAngles;
 
+        VectorCos vecAngles;
+		Model_Result(SKOangleOZ, SKOangleOX, offsetAngles, vecAngles, in, simCat);
+		vector<pair<short, short> > vec = RadToPix(in, out_n, SKOpix, false); //Перевод в пиксели
+		UnicodeString initFileName = FileList->Strings[k];
 
+		initFileName = StringReplace(initFileName, " .txt", "needed_res", TReplaceFlags() << rfReplaceAll);
+		string f_without_SKO = add_string::toStdString(initFileName);
+		WriteToFile(f_without_SKO, out_n, vecAngles);
 
+        CountOZ_1 = CountOZ;
 
+        //Вывод результатов испытаний на график
+		Series2->Active = false; //Отключение Series2
+        Series1->Clear(); //Очистка Series1 в TChart
+        Series1->Active = true;
+
+        for (int i = 0; i <= CountOZ; i++) {
+            for (int j = 0; j < CountPixY[i]; j++) {
+                Series1->AddXY(out_n.X[i][j], out_n.Y[i][j]);
+            }
+            CountPixY_1[i] = CountPixY[i];
+        }
+
+		scale = 1;//StrToFloat(EditScale->Text);
+        //Моделирование в случае наличия отклонений
+		if (if_SKO) {
+            VectorCos vecError;
+			Model_Result(SKOangleOZ, SKOangleOX, offsetAngles, vecError, in, simCat); //Моделирование результатов
+            vector<pair<short, short> > vec = RadToPix(in, out_r, SKOpix, true); //Перевод в пиксели
+            VectorCos vecInters;
+            int row = vec[0].first;
+			int k = 0;
+            for (int i = 0; i < vec.size(); i++) {
+                if (row != vec[i].first) {
+                    k = 0;
+                    row = vec[i].first;
+                }
+                vecInters.Lst[vec[i].first][k] = vecNoError.Lst[vec[i].first][vec[i].second];
+                vecInters.Mst[vec[i].first][k] = vecNoError.Mst[vec[i].first][vec[i].second];
+                vecInters.Nst[vec[i].first][k] = vecNoError.Nst[vec[i].first][vec[i].second];
+                ++k;
+			}
+			initFileName = StringReplace(initFileName, "needed_res", "factical_res", TReplaceFlags() << rfReplaceAll);
+			string f_with_SKO = add_string::toStdString(initFileName);
+			WriteToFile(f_with_SKO, out_r, vecError); //Вывод в файл "Results_Factical.txt"
+            //Вывод результатов испытаний на график
+			Series1->Active = true;
+            Series2->Clear(); //Очистка Series2 в TChart
+            Series2->Active = true;
+
+			if (CountOZ_1 < CountOZ) {
+                CountOZ = CountOZ_1;
+            }
+			for (int i = 0; i <= CountOZ; i++) {
+				if (CountPixY_1[i] < CountPixY[i]) {
+                    CountPixY[i] = CountPixY_1[i];
+                }
+				for (int j = 0; j < CountPixY[i]; j++) {
+					double offsetX = (out_r.X[i][j] - out_n.X[i][j]) * scale;
+					double offsetY = (out_r.Y[i][j] - out_n.Y[i][j]) * scale;
+					Series1->AddXY(out_n.X[i][j], out_n.Y[i][j]);
+					Series2->AddArrow(out_n.X[i][j], out_n.Y[i][j], out_r.X[i][j] + offsetX, out_r.Y[i][j] + offsetY);
+                }
+            }
+		}
+	}
+		EditFoc->Enabled = True;
+		EditElem->Enabled = True;
+		EditWidth->Enabled = True;
+		EditHeight->Enabled = True;
+}
+}
+//---------------------------------------------------------------------------
 
 

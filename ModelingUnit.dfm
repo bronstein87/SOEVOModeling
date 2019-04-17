@@ -2,7 +2,7 @@
   Left = 69
   Top = 0
   Caption = #1052#1086#1076#1077#1083#1080#1088#1086#1074#1072#1085#1080#1077' '#1080#1079#1084#1077#1088#1077#1085#1080#1081' '#1057#1054#1069#1042#1054
-  ClientHeight = 797
+  ClientHeight = 802
   ClientWidth = 958
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@
   OnCreate = FormCreate
   DesignSize = (
     958
-    797)
+    802)
   PixelsPerInch = 96
   TextHeight = 13
   object Label18: TLabel
@@ -56,9 +56,9 @@
     Caption = 'Label39'
   end
   object ButtonClose: TButton
-    Left = 148
+    Left = 243
     Top = 772
-    Width = 145
+    Width = 53
     Height = 25
     Caption = #1042#1099#1093#1086#1076
     TabOrder = 0
@@ -107,33 +107,22 @@
     Left = 302
     Top = -8
     Width = 658
-    Height = 808
+    Height = 813
     Legend.Visible = False
     Title.Font.Color = clBlack
     Title.Font.Height = -16
     Title.Font.Style = [fsBold]
     Title.Text.Strings = (
       #1052#1086#1076#1077#1083#1080#1088#1086#1074#1072#1085#1080#1077' '#1088#1077#1079#1091#1083#1100#1090#1072#1090#1086#1074' '#1080#1079#1084#1077#1088#1077#1085#1080#1081)
-    DepthAxis.Automatic = False
-    DepthAxis.AutomaticMaximum = False
-    DepthAxis.AutomaticMinimum = False
-    DepthAxis.Maximum = 0.169999999999999900
-    DepthAxis.Minimum = -0.830000000000000300
-    DepthTopAxis.Automatic = False
-    DepthTopAxis.AutomaticMaximum = False
-    DepthTopAxis.AutomaticMinimum = False
-    DepthTopAxis.Maximum = 0.169999999999999900
-    DepthTopAxis.Minimum = -0.830000000000000300
+    DepthAxis.Visible = True
+    DepthTopAxis.Visible = True
     LeftAxis.Inverted = True
-    RightAxis.Automatic = False
-    RightAxis.AutomaticMaximum = False
-    RightAxis.AutomaticMinimum = False
+    TopAxis.Axis.Color = clDefault
     TopAxis.Labels = False
     TopAxis.LabelsFormat.Visible = False
     View3D = False
     TabOrder = 5
     Anchors = [akLeft, akTop, akRight, akBottom]
-    ExplicitHeight = 809
     DefaultCanvas = 'TGDIPlusCanvas'
     PrintMargins = (
       15
@@ -424,7 +413,7 @@
     Top = 371
     Width = 294
     Height = 232
-    ActivePage = Точки
+    ActivePage = Углы
     Style = tsFlatButtons
     TabOrder = 12
     object Углы: TTabSheet
@@ -557,16 +546,9 @@
         object Label47: TLabel
           Left = 3
           Top = 155
-          Width = 106
+          Width = 105
           Height = 13
-          Caption = #1054#1096#1080#1073#1082#1072' '#947'_y, '#1091#1075#1083'.'#1089#1077#1082
-        end
-        object Label55: TLabel
-          Left = 3
-          Top = 184
-          Width = 106
-          Height = 13
-          Caption = #1054#1096#1080#1073#1082#1072' '#947'_x, '#1091#1075#1083'.'#1089#1077#1082
+          Caption = #1054#1096#1080#1073#1082#1072' '#947'_z, '#1091#1075#1083'.'#1089#1077#1082
         end
         object EditAlpha1OY: TEdit
           Left = 33
@@ -632,20 +614,12 @@
           TabOrder = 7
           Text = '0'
         end
-        object EditGammaErrorY: TEdit
+        object EditGammaErrorZ: TEdit
           Left = 115
           Top = 152
           Width = 113
           Height = 21
           TabOrder = 8
-          Text = '0'
-        end
-        object EditGammaErrorX: TEdit
-          Left = 115
-          Top = 179
-          Width = 113
-          Height = 21
-          TabOrder = 9
           Text = '0'
         end
       end
@@ -670,16 +644,16 @@
         object Label35: TLabel
           Left = 19
           Top = 54
-          Width = 106
+          Width = 101
           Height = 13
-          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' X, '#1087#1080#1082#1089
+          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' X, '#1084#1080#1085
         end
         object Label1: TLabel
           Left = 19
           Top = 84
-          Width = 106
+          Width = 101
           Height = 13
-          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' Y, '#1087#1080#1082#1089
+          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' Y, '#1084#1080#1085
         end
         object Label38: TLabel
           Left = 15
@@ -691,16 +665,16 @@
         object Label41: TLabel
           Left = 19
           Top = 135
-          Width = 106
+          Width = 101
           Height = 13
-          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' X, '#1087#1080#1089#1082
+          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' X, '#1084#1080#1085
         end
         object Label43: TLabel
           Left = 19
           Top = 166
-          Width = 106
+          Width = 101
           Height = 13
-          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' Y, '#1087#1080#1082#1089
+          Caption = #1057#1084#1077#1097#1077#1085#1080#1077' '#1087#1086' Y, '#1084#1080#1085
         end
         object EditFirstPointY: TEdit
           Left = 131
@@ -709,7 +683,7 @@
           Height = 21
           Align = alCustom
           TabOrder = 0
-          Text = '50'
+          Text = '15'
         end
         object EditSecondPointX: TEdit
           Left = 131
@@ -717,7 +691,7 @@
           Width = 145
           Height = 21
           TabOrder = 1
-          Text = '50'
+          Text = '15'
         end
         object EditSecondPointY: TEdit
           Left = 131
@@ -725,7 +699,7 @@
           Width = 145
           Height = 21
           TabOrder = 2
-          Text = '-50'
+          Text = '-15'
         end
         object AddPointsCheckBox: TCheckBox
           Left = 15
@@ -737,13 +711,13 @@
         end
       end
       object EditFirstPointX: TEdit
-        Left = 128
+        Left = 127
         Top = 54
         Width = 145
         Height = 21
         Align = alCustom
         TabOrder = 1
-        Text = '50'
+        Text = '15'
       end
     end
   end
@@ -933,6 +907,15 @@
       Text = '10'
     end
   end
+  object Button1: TButton
+    Left = 144
+    Top = 769
+    Width = 93
+    Height = 25
+    Caption = #1055#1086' '#1082#1072#1090#1072#1083#1086#1075#1072#1084
+    TabOrder = 14
+    OnClick = Button1Click
+  end
   object OpenDialogDist: TOpenDialog
     Left = 240
     Top = 64
@@ -973,5 +956,9 @@
       ComponentProperty = 'Enabled'
       InitializeControlValue = False
     end
+  end
+  object OpenDialog: TOpenDialog
+    Left = 269
+    Top = 629
   end
 end
