@@ -146,7 +146,7 @@ void TForm1::XY(double* Xout, double* Yout, int a, int b, VectorCos& v, double M
 vector < pair<short, short> > TForm1::RadToPix(XYCoords& in, XYCoords& out, double SKOpixel, bool flDist)
 {
 	vector < pair<short, short> > vec;
-	for (int i = 0; i < CountOZ; i++)
+	for (int i = 0; i <= CountOZ; i++)
 	{
 		int starCountLine = 0;
 		for (int j = 0; j < CountOX; j++)
@@ -440,7 +440,7 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 		CountOX = pointCount * simCat.alpha.size();
 		for (int j = 0; j < CountOX; j++)
 		{
-			for (int i = 0; i < CountOZ ; i++)
+			for (int i = 0; i <= CountOZ ; i++)
 			{
 				int pointPos = j * pointCount;
 				for (int k = 0; k < pointCount; k++)
@@ -488,15 +488,15 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 	double MVSK[3][3];
 	double MDelta[3][3];
 
-	CountOZ = floor(2 * pi / incOZ) + 1; 	// ол-во поворотов вокруг OZ
-	if (radtodeg(incOZ * CountOZ) > 359.9)
-	{
-		CountOZ = CountOZ - 1;
-	}
+//	CountOZ = floor(2 * pi / incOZ) + 1; 	// ол-во поворотов вокруг OZ
+//	if (radtodeg(incOZ * CountOZ) > 359.9)
+//	{
+//		CountOZ = CountOZ - 1;
+//	}
 
 	if (CountOZ > MaxPoint) CountOZ = MaxPoint;
 	if (CountOX > MaxPoint) CountOX = MaxPoint;
-	//CountOZ = CountOX;
+	CountOZ = CountOX + 1;
 
 	double triangleAngles [3][2] =  {{0, 0},
 	{addPointsParams.firstPointOffsetY, addPointsParams.firstPointOffsetX},
@@ -520,14 +520,16 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 		CountOX = NumberInRow;
 	}
 
-	for (int i = 0; i < CountOZ; i++)
+	for (int i = 0; i <= CountOZ; i++)
 	{
 		double errorOz = 0;
 		if (CheckBoxAngleError->Checked) {
-			errorOz = RandG(0.0055, offsetAngles.SKOGammaOZ);
+			errorOz = RandG(0, offsetAngles.SKOGammaOZ);
 		}
 		gammaOZAngles.push_back(errorOz);
 	}
+
+
 		for (int j = 0; j < CountOX; j++)
 		{
 			for (int i = 0; i < CountOZ; i++)
@@ -538,7 +540,7 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 					RotateOZ(gammaOZAngles[i], Minit, MgammaOZ);    // новый поворот
 					RotateOY(offsetAngles.gammaOY, MgammaOZ, MgammaOY);
 					RotateOX(offsetAngles.gammaOX, MgammaOY, MgammaOX);
-					AngleOZ[i] = i * incOZ;
+					AngleOZ[i] = Gamma[i];
 					double AngleOZReal =  AngleOZ[i] + degtorad(RandG(0, SKO_angle_OZ));
 					AngleOX_1[i][pointPos] = Gamma[j];
 					double AngleOXReal =  AngleOX_1[i][pointPos] + degtorad(RandG(0, SKO_angle_OX));
@@ -547,10 +549,13 @@ void TForm1::Model_Result(double SKO_angle_OZ, double SKO_angle_OX, OffsetAngles
 					RotateOX(offsetAngles.alphaTwoOX, MsecondPlatfOY, MsecondPlatfOX);
 					MatrProizv3x3(Mi ,MsecondPlatfOX , Mtemp);
 					//RotateOZ(AngleOZReal, Mtemp, Mc);
-					RotateOY(Gamma[i], Mtemp, Mc);  // новый поворот
+					RotateOY(AngleOZReal, Mtemp, Mc);  // новый поворот
 					MatrProizv3x3(Mc ,Mx, Mtemp);
 					MatrProizv3x3(MgammaOX, Mtemp, MVSKNoDir);
 					MatrProizv3x3(Maxis, MVSKNoDir, MVSK);
+				   //	double MVSKr[3][3];
+					//RotateOZ(pi/2, MVSK, MVSKr);
+
 					LMN[0] = -cos(offsetAngles.lambdaOY + offsetAngles.alphaOneOY + triangleAngles[k][0])
 					* cos(offsetAngles.lambdaOX + offsetAngles.alphaOneOX + triangleAngles[k][1]);
 					LMN[1] = -cos(offsetAngles.lambdaOY + offsetAngles.alphaOneOY + triangleAngles[k][0])
@@ -744,7 +749,7 @@ void __fastcall TForm1::ButtonSimulateClick(TObject *Sender)
 			 << vecError.Mst[vec[i].first][vec[i].second] << "\t"
 			 << vecError.Nst[vec[i].first][vec[i].second] << "\t"
 			 << "\n";
-        }
+		}
 		ofs.close();
 
 

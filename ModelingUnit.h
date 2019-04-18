@@ -40,6 +40,12 @@ double const pi = 3.1415926535897932384626433832795;
 const int MaxDist = 10;
 using namespace std;
 
+enum RotateDir
+{
+	UpToDown,
+    LeftToRight
+};
+
 struct OffsetAngles
 {
 	OffsetAngles():  alphaOneOY(0), alphaOneOX(0),
@@ -262,6 +268,7 @@ __published:	// IDE-managed Components
 	TLabel *Label39;
 	TButton *Button1;
 	TOpenDialog *OpenDialog;
+	TRadioGroup *RadioGroup1;
 	void __fastcall ButtonCloseClick(TObject *Sender);
 	void __fastcall ButtonSimulateClick(TObject *Sender);
 	void __fastcall FormActivate(TObject *Sender);

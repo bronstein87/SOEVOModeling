@@ -916,6 +916,19 @@
     TabOrder = 14
     OnClick = Button1Click
   end
+  object RadioGroup1: TRadioGroup
+    Left = 8
+    Top = 568
+    Width = 288
+    Height = 31
+    Caption = #1042#1088#1072#1097#1072#1090#1100
+    Columns = 3
+    Items.Strings = (
+      #1057#1074#1077#1088#1093#1091' '#1074#1085#1080#1079
+      #1057#1083#1077#1074#1072' '#1085#1072#1087#1088#1072#1074#1086
+      #1048' '#1090#1072#1082' '#1080' '#1090#1072#1082)
+    TabOrder = 15
+  end
   object OpenDialogDist: TOpenDialog
     Left = 240
     Top = 64
